@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTopRatedMovies } from "../../apiClient/index";
 import React from "react";
 
-export default function HomeScreen() {
+export default function PopularScreen() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["topRatedMovies"],
     queryFn: fetchTopRatedMovies,
