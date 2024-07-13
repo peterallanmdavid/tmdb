@@ -2,6 +2,7 @@ export type Movie = {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
+  genres: Genre[] | undefined;
   id: number;
   original_language: string;
   original_title: string;
@@ -41,4 +42,13 @@ export type ApiImageConfig = {
 export type ApiConfigResponse = {
   images: ApiImageConfig;
   change_keys: string[];
+};
+
+export type Genre = {
+  id: number;
+  name: string;
+};
+
+export type GenreResponse = {
+  genres: Genre[];
 };

@@ -1,6 +1,13 @@
 import React, { PropsWithChildren, createContext, useContext } from "react";
-import { ApiConfigResponse, MovieCategory, MoviesResponse } from "./types";
+import {
+  ApiConfigResponse,
+  Genre,
+  GenreResponse,
+  MovieCategory,
+  MoviesResponse,
+} from "./types";
 import { useQuery } from "@tanstack/react-query";
+import { fetchApi } from "./fetchApi";
 
 interface ApiClientProviderProps {}
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -21,44 +28,26 @@ const ApiClientContext = createContext<{
 export const ApiClientProvider: React.FC<
   PropsWithChildren<ApiClientProviderProps>
 > = ({ children }) => {
-  const fetchConfig = async (): Promise<ApiConfigResponse> => {
-    const response = await fetch(`${BASE_URL}/configuration`, {
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    return response.json();
-  };
-
-  const { data, isLoading } = useQuery({
+  const { data: configData, isLoading: configLoading } = useQuery({
     queryKey: ["apiConfig"],
-    queryFn: fetchConfig,
+    queryFn: () => fetchApi<ApiConfigResponse>("configuration"),
   });
 
-  const apiImageConfig = data?.images;
+  const { data: genreData, isLoading: genreLoading } = useQuery({
+    queryKey: ["genre"],
+    queryFn: () => fetchApi<GenreResponse>("genre/movie/list"),
+  });
+
+  const apiImageConfig = configData?.images;
 
   const fetchMovies = async (
     category: MovieCategory,
     page: number
   ): FetchMovieResponse => {
-    const response = await fetch(
-      `${BASE_URL}/movie/${category}?language=en-US&page=${page}';`,
-      {
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-        },
-      }
+    const movies = await fetchApi<MoviesResponse>(
+      `movie/${category}?language=en-US&page=${page}`
     );
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const jsonResponse: MoviesResponse = await response.json();
     const backdropSize =
       apiImageConfig?.backdrop_sizes?.find((item) => item === "original") ||
       apiImageConfig?.backdrop_sizes?.[0];
@@ -67,18 +56,18 @@ export const ApiClientProvider: React.FC<
       apiImageConfig?.poster_sizes?.find((item) => item === "original") ||
       apiImageConfig?.backdrop_sizes?.[0];
 
-    const nextPage =
-      jsonResponse.page < jsonResponse.total_pages
-        ? jsonResponse.page + 1
-        : null;
+    const nextPage = movies.page < movies.total_pages ? movies.page + 1 : null;
 
     return {
       data: {
-        ...jsonResponse,
-        results: jsonResponse?.results.map((item) => ({
+        ...movies,
+        results: movies?.results.map((item) => ({
           ...item,
           backdrop_path: `${apiImageConfig?.secure_base_url}${backdropSize}/${item.backdrop_path}`,
           poster_path: `${apiImageConfig?.secure_base_url}${posterPathSize}/${item.poster_path}`,
+          genres: genreData?.genres?.filter((gr) =>
+            item.genre_ids.includes(gr.id)
+          ),
         })),
       },
       nextPage,
@@ -87,7 +76,7 @@ export const ApiClientProvider: React.FC<
 
   return (
     <ApiClientContext.Provider
-      value={{ fetchMovies, configLoading: isLoading }}
+      value={{ fetchMovies, configLoading: configLoading || genreLoading }}
     >
       {children}
     </ApiClientContext.Provider>

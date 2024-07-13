@@ -16,16 +16,16 @@ export const Card: React.FC<PropsWithChildren<CardProps>> = ({
   const backgroundColor = colors.white;
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={[{ backgroundColor }, styles.container, style]}>
-        {children}
-      </View>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[{ backgroundColor }, styles.container, style]}
+    >
+      {children}
     </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
   },
 });
