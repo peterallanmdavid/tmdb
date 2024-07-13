@@ -66,8 +66,8 @@ export default function MovieDetails() {
             </View>
 
             <View style={{ flexDirection: "row", marginTop: 20 }}>
-              {data?.genres?.map(({ name }) => (
-                <View style={styles.pill}>
+              {data?.genres?.map(({ name, id }) => (
+                <View style={styles.pill} key={id}>
                   <Text color="white">{name}</Text>
                 </View>
               ))}
