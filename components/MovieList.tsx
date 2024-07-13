@@ -1,4 +1,3 @@
-import { fetchMovies } from "@/utils/apiClient";
 import {
   useInfiniteQuery,
   useQuery,
@@ -13,10 +12,11 @@ import {
   View,
 } from "react-native";
 import { Card } from "./Card";
-import { ThemedView } from "./ThemedView";
-import { Movie, MovieCategory, MoviesResponse } from "@/utils/types";
+
+import { MovieCategory } from "@/utils/types";
 import { useApiClent } from "@/utils/ApiClientProvider";
-import { ThemedText } from "./ThemedText";
+import { Text } from "./Text";
+import { useRouter } from "expo-router";
 
 interface MovieListProps {
   category: MovieCategory;
@@ -29,23 +29,16 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-  } = useInfiniteQuery({
-    enabled: !configLoading,
-    queryKey: ["movies", category],
-    queryFn: ({ pageParam = 1 }) => {
-      return fetchMovies(category, pageParam);
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    useInfiniteQuery({
+      enabled: !configLoading,
+      queryKey: ["movies", category],
+      queryFn: ({ pageParam = 1 }) => {
+        return fetchMovies(category, pageParam);
+      },
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+    });
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -55,19 +48,23 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
     setRefreshing(false);
   };
 
+  const router = useRouter();
   return (
     <View style={styles.container}>
       {status === "pending" ? (
         <ActivityIndicator size="large" />
       ) : status === "error" ? (
-        <ThemedText>Error Fetching Movies</ThemedText>
+        <Text>Error Fetching Movies</Text>
       ) : (
         <FlatList
           data={data?.pages.flatMap((page) => page?.data?.results)}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => `${item?.id}`}
           renderItem={({ item }) => (
-            <Card style={{ marginVertical: 10 }}>
-              <ThemedText>{item?.title}</ThemedText>
+            <Card
+              style={{ marginVertical: 10 }}
+              onPress={() => router.push(`/movie-details/${item?.id}`)}
+            >
+              <Text>{item?.title}</Text>
             </Card>
           )}
           refreshing={refreshing}
@@ -79,7 +76,7 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
               ) : hasNextPage ? (
                 <Button title="Load More" onPress={() => fetchNextPage()} />
               ) : (
-                <ThemedText>No more data</ThemedText>
+                <Text>No more data</Text>
               )}
             </View>
           )}

@@ -22,7 +22,7 @@ export const ApiClientProvider: React.FC<
   PropsWithChildren<ApiClientProviderProps>
 > = ({ children }) => {
   const fetchConfig = async (): Promise<ApiConfigResponse> => {
-    const response = await fetch(`${BASE_URL}/3/configuration`, {
+    const response = await fetch(`${BASE_URL}/configuration`, {
       headers: {
         Authorization: `Bearer ${API_KEY}`,
       },
@@ -31,10 +31,11 @@ export const ApiClientProvider: React.FC<
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
+
     return response.json();
   };
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["apiConfig"],
     queryFn: fetchConfig,
   });
@@ -58,7 +59,6 @@ export const ApiClientProvider: React.FC<
       throw new Error("Network response was not ok");
     }
     const jsonResponse: MoviesResponse = await response.json();
-
     const backdropSize =
       apiImageConfig?.backdrop_sizes?.find((item) => item === "original") ||
       apiImageConfig?.backdrop_sizes?.[0];

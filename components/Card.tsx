@@ -1,23 +1,26 @@
 import React, { PropsWithChildren } from "react";
-import { ThemedView } from "./ThemedView";
-import { StyleSheet, ViewStyle, useColorScheme } from "react-native";
-import { Colors } from "@/constants/Colors";
+
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Colors, colors } from "@/constants/Colors";
 
 interface CardProps {
   style: ViewStyle;
+  onPress: () => void;
 }
 
 export const Card: React.FC<PropsWithChildren<CardProps>> = ({
   children,
   style,
+  onPress,
 }) => {
-  const colorScheme = useColorScheme();
-  const backgroundColor = Colors[colorScheme ?? "light"].background;
+  const backgroundColor = colors.white;
 
   return (
-    <ThemedView style={[{ backgroundColor }, styles.container, style]}>
-      {children}
-    </ThemedView>
+    <TouchableOpacity onPress={onPress}>
+      <View style={[{ backgroundColor }, styles.container, style]}>
+        {children}
+      </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
