@@ -1,4 +1,4 @@
-import { Movie } from "@/utils/types";
+import { MovieListItem } from "@/utils/types";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Card } from "./Card";
@@ -8,7 +8,7 @@ import { StyleSheet, View } from "react-native";
 import { colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 interface MovieListCardProps {
-  data: Movie;
+  data: MovieListItem;
 }
 
 export const MovieListCard: React.FC<MovieListCardProps> = ({ data }) => {
@@ -68,6 +68,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  imageContainer: {
+    height: 150,
+    width: 100,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    backgroundColor: colors.grey1,
+  },
   rating: {
     flexDirection: "row",
     alignItems: "center",
@@ -79,12 +86,5 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     flex: 1,
-  },
-  imageContainer: {
-    height: 150,
-    width: 100,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    backgroundColor: colors.grey1,
   },
 });

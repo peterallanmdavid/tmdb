@@ -1,11 +1,11 @@
 import React, { PropsWithChildren } from "react";
 
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
-import { Colors, colors } from "@/constants/Colors";
+import { colors } from "@/constants/Colors";
 
 interface CardProps {
   style: ViewStyle;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export const Card: React.FC<PropsWithChildren<CardProps>> = ({
@@ -17,8 +17,9 @@ export const Card: React.FC<PropsWithChildren<CardProps>> = ({
 
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => onPress?.()}
       style={[{ backgroundColor }, styles.container, style]}
+      disabled={!onPress}
     >
       {children}
     </TouchableOpacity>

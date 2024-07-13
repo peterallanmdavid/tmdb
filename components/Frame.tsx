@@ -1,8 +1,5 @@
 import { StyleSheet, View, type ViewProps } from "react-native";
-import {
-  SafeAreaView,
-  type SafeAreaViewProps,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FrameHeader } from "./FrameHeader";
 import { PropsWithChildren } from "react";
 
@@ -24,7 +21,7 @@ export const Frame: React.FC<PropsWithChildren<FrameProps>> = ({
   withoutBack,
 }) => {
   return (
-    <SafeAreaView style={[styles.container, style]}>
+    <SafeAreaView style={[styles.container]}>
       {!noHeader && (
         <FrameHeader
           title={title}
@@ -32,7 +29,7 @@ export const Frame: React.FC<PropsWithChildren<FrameProps>> = ({
           withoutBack={withoutBack}
         />
       )}
-      <View style={styles.content}>{children}</View>
+      <View style={[styles.content, style]}>{children}</View>
     </SafeAreaView>
   );
 };

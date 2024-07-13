@@ -1,23 +1,18 @@
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Button,
+  TouchableOpacity,
   FlatList,
   StyleSheet,
   View,
 } from "react-native";
-import { Card } from "./Card";
 
-import { Movie, MovieCategory } from "@/utils/types";
+import { MovieListItem, MovieCategory } from "@/utils/types";
 import { useApiClent } from "@/utils/ApiClientProvider";
 import { Text } from "./Text";
-import { useRouter } from "expo-router";
 import { MovieListCard } from "./MovieListCard";
+import { colors } from "@/constants/Colors";
 
 interface MovieListProps {
   category: MovieCategory;
@@ -59,17 +54,26 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
         <FlatList
           data={data?.pages
             .flatMap((page) => page?.data?.results)
-            ?.filter((item): item is Movie => !!item)}
+            ?.filter((item): item is MovieListItem => !!item)}
           keyExtractor={(item) => `${item?.id}`}
           renderItem={({ item }) => <MovieListCard data={item} />}
           refreshing={refreshing}
           onRefresh={handleRefresh}
           ListFooterComponent={() => (
-            <View style={{ padding: 20 }}>
-              {isFetchingNextPage ? (
-                <ActivityIndicator size="large" />
-              ) : hasNextPage ? (
-                <Button title="Load More" onPress={() => fetchNextPage()} />
+            <View>
+              {hasNextPage ? (
+                <TouchableOpacity
+                  onPress={() => fetchNextPage()}
+                  style={styles.button}
+                >
+                  {isFetchingNextPage ? (
+                    <ActivityIndicator size="large" color={colors.white} />
+                  ) : (
+                    <Text color="white" size={20}>
+                      Load More
+                    </Text>
+                  )}
+                </TouchableOpacity>
               ) : (
                 <Text>No more data</Text>
               )}
@@ -86,5 +90,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     justifyContent: "center",
+  },
+  button: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    alignItems: "center",
+    borderRadius: 5,
+    marginTop: 10,
   },
 });

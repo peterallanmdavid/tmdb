@@ -1,27 +1,30 @@
 import React, { PropsWithChildren, createContext, useContext } from "react";
 import {
   ApiConfigResponse,
-  Genre,
   GenreResponse,
+  MovieListItem,
   MovieCategory,
   MoviesResponse,
+  MovieDetail,
 } from "./types";
 import { useQuery } from "@tanstack/react-query";
-import { fetchApi } from "./fetchApi";
+import { fetchApi, formatImagesInMovie } from "./fetchApi";
 
 interface ApiClientProviderProps {}
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type FetchMovieResponse = Promise<{
   data: MoviesResponse | undefined;
   nextPage: number | null;
 }>;
+
+type fetchMovieDetails = Promise<MovieDetail | undefined>;
 const ApiClientContext = createContext<{
   fetchMovies: (params: MovieCategory, page: number) => FetchMovieResponse;
+  fetchMovieDetails: (id: string) => fetchMovieDetails;
   configLoading: boolean;
 }>({
   fetchMovies: () => Promise.resolve({ data: undefined, nextPage: 1 }),
+  fetchMovieDetails: () => Promise.resolve(undefined),
   configLoading: false,
 });
 
@@ -47,26 +50,18 @@ export const ApiClientProvider: React.FC<
     const movies = await fetchApi<MoviesResponse>(
       `movie/${category}?language=en-US&page=${page}`
     );
-
-    const backdropSize =
-      apiImageConfig?.backdrop_sizes?.find((item) => item === "original") ||
-      apiImageConfig?.backdrop_sizes?.[0];
-
-    const posterPathSize =
-      apiImageConfig?.poster_sizes?.find((item) => item === "original") ||
-      apiImageConfig?.backdrop_sizes?.[0];
-
     const nextPage = movies.page < movies.total_pages ? movies.page + 1 : null;
 
     return {
       data: {
         ...movies,
-        results: movies?.results.map((item) => ({
-          ...item,
-          backdrop_path: `${apiImageConfig?.secure_base_url}${backdropSize}/${item.backdrop_path}`,
-          poster_path: `${apiImageConfig?.secure_base_url}${posterPathSize}/${item.poster_path}`,
+        results: movies?.results.map((m) => ({
+          ...formatImagesInMovie<MovieListItem>({
+            movie: m,
+            apiImageConfig: configData?.images,
+          }),
           genres: genreData?.genres?.filter((gr) =>
-            item.genre_ids.includes(gr.id)
+            m.genre_ids.includes(gr.id)
           ),
         })),
       },
@@ -74,9 +69,18 @@ export const ApiClientProvider: React.FC<
     };
   };
 
+  const fetchMovieDetails = async (id: string) => {
+    const movie = await fetchApi<MovieDetail>(`movie/${id}`);
+
+    return formatImagesInMovie<MovieDetail>({ movie, apiImageConfig });
+  };
   return (
     <ApiClientContext.Provider
-      value={{ fetchMovies, configLoading: configLoading || genreLoading }}
+      value={{
+        fetchMovies,
+        fetchMovieDetails,
+        configLoading: configLoading || genreLoading,
+      }}
     >
       {children}
     </ApiClientContext.Provider>

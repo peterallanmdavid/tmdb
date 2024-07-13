@@ -5,6 +5,7 @@ export const colors = {
   white: "#fff",
   default: "#000",
   grey1: "#A4A4A4",
+  grey3: "#444",
   grey2: "#E5E5E5",
   rating: "#ED9D00",
 };

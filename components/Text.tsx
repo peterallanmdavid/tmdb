@@ -1,5 +1,3 @@
-// Only here we are allowing to import <Text> component from 'react-native
-// eslint-disable-next-line no-restricted-imports
 import { Colors, colors } from "@/constants/Colors";
 import { type PropsWithChildren } from "react";
 import {
@@ -8,8 +6,6 @@ import {
   type TextProps,
   type TextStyle,
 } from "react-native";
-
-// Generic text style and logic here
 
 type fontWeight = "regular" | "bold" | "black" | "light" | "thin";
 
