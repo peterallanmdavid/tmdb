@@ -80,6 +80,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 5,
     alignItems: "center",
+    overflow: "visible",
+    flexWrap: "wrap",
   },
   detailsContainer: { flex: 1 },
   image: {

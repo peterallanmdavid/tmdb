@@ -20,5 +20,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey4,
     borderRadius: 5,
     marginRight: 5,
+    marginTop: 5,
   },
 });
