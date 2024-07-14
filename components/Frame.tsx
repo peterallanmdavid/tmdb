@@ -21,7 +21,7 @@ export const Frame: React.FC<PropsWithChildren<FrameProps>> = ({
   withoutBack,
 }) => {
   return (
-    <SafeAreaView style={[styles.container]}>
+    <SafeAreaView style={[styles.container]} edges={["top"]}>
       {!noHeader && (
         <FrameHeader
           title={title}
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+
     paddingHorizontal: 10,
   },
 });

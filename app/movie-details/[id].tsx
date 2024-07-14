@@ -10,6 +10,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { FontAwesome } from "@expo/vector-icons";
 
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { Pill } from "@/components/Pill";
 
 const convertMinutesToHoursMinutes = (totalMinutes: number): string => {
   const hours = Math.floor(totalMinutes / 60);
@@ -67,9 +68,7 @@ export default function MovieDetails() {
 
             <View style={{ flexDirection: "row", marginTop: 20 }}>
               {data?.genres?.map(({ name, id }) => (
-                <View style={styles.pill} key={id}>
-                  <Text color="white">{name}</Text>
-                </View>
+                <Pill key={id}>{name}</Pill>
               ))}
             </View>
 
@@ -129,13 +128,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     flexDirection: "row",
   },
-  pill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: colors.grey3,
-    borderRadius: 20,
-    marginRight: 5,
-  },
+
   rating: {
     flexDirection: "row",
     alignItems: "center",

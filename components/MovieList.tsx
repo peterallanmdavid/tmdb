@@ -52,6 +52,7 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
         <Text>Error Fetching Movies</Text>
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={data?.pages
             .flatMap((page) => page?.data?.results)
             ?.filter((item): item is MovieListItem => !!item)}
@@ -88,7 +89,7 @@ export const MovieList: React.FC<MovieListProps> = ({ category }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
+
     justifyContent: "center",
   },
   button: {
@@ -98,5 +99,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     marginTop: 10,
+    marginBottom: 10,
   },
 });
