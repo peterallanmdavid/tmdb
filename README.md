@@ -16,6 +16,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo start
    ```
 
+3. Add an .env file in the root directory for the following values
+```
+   EXPO_PUBLIC_API_KEY=some_api_key
+   EXPO_PUBLIC_API_URL=some_api_url
+```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
